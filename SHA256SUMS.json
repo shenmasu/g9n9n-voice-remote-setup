@@ -7,20 +7,20 @@
       "sha256": "8431e82e983b1556c632ccfc740fd982fd44a2bff70e3faf38d94f932cb3d104"
     },
     "AGENTS.md": {
-      "bytes": 1892,
-      "sha256": "a1eeb7db83d60f4dd8b438d5a04c202e26886702f53127ce4c6b965c693f06c3"
+      "bytes": 2243,
+      "sha256": "4e349fd602e12ceb8e87e6eaa6b18104db4fbf9dfefedf4203457b37a7f39232"
     },
     "docs/Mac-微信输入法方案.md": {
-      "bytes": 3126,
-      "sha256": "d3409003356e828fa60790a06fcd33c39428ab03aca428d28fdf4c18ccf1c505"
+      "bytes": 3428,
+      "sha256": "c939be57c4d53c3b8958797768d1685490835c1722ef56f84eb9c7c88d523a2c"
     },
     "docs/单文件指南.md": {
-      "bytes": 93286,
-      "sha256": "a61d47d9d1ba28987a1616175a553bfd5a6bb7d067dbe0987d704a823ae12e04"
+      "bytes": 94029,
+      "sha256": "a8245a839fb304bb248247140ae9a4d84a45ee03f8a78482f2d81bb2c260057e"
     },
     "docs/来源与许可.md": {
-      "bytes": 5190,
-      "sha256": "dce7be26266cdda1f8d60f66a489a70093dbf7753a38f46ff85d171584f81488"
+      "bytes": 5322,
+      "sha256": "a09fe554d35d8611ab9aebb1d0b34c48cbbbe87822fb3fd128a063642533707f"
     },
     "LICENSE-CC0": {
       "bytes": 455,
@@ -39,8 +39,8 @@
       "sha256": "63aa908d0f8baac62f1355290b9c71383103ab7d7d22c87e3ff6698178ee8682"
     },
     "README.md": {
-      "bytes": 8810,
-      "sha256": "40d05529f7a77219e6587d1811e4f4594013dc37657d8bb5d1aaa9ca3bc3373a"
+      "bytes": 9802,
+      "sha256": "1727f6bad818c597078249d1e2b3652fc18394126fe4571294b4f765931f388b"
     },
     "scripts/check-mac-runtime.sh": {
       "bytes": 3229,
@@ -51,8 +51,8 @@
       "sha256": "1c0fe47eceabd44928cb445af8a99e142ee6a704c3b881bfd6be90ed7b43a82a"
     },
     "windows/完整指南.md": {
-      "bytes": 25589,
-      "sha256": "80d57185a591055f2262fd79156bffba85ab9efe0a8dfa2b76038e4e6b4bc4e4"
+      "bytes": 25951,
+      "sha256": "e34bafa14f56bfae66a9bfc4957337eb62caa0e0f39631a92d54598b1bd66c1b"
     }
   }
 }

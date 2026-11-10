@@ -24,6 +24,12 @@ cd g9n9n-voice-remote-setup
 
 两者都已由机主本人确认「按住语音键说话，文本输入框出现真实中文」。Windows 端还逐项验收过基础 coding 映射和音量键；Mac 端基础普通键已收到真实三字节报告，**逐键全量映射未做完整验收**。没有把「蓝牙已连接」「订阅成功」「电平跳动」或自动测试当作最终完成。
 
+### 关于输入法：微信输入法实机验收，其他输入法原理相通
+
+这份方案**主要跑通、并且两端逐项复核的是微信输入法（WeType）**：Windows 在语音输入里选 `CABLE Output`、按住说话设为 `Ctrl+Win`；Apple Silicon Mac 选 `BlackHole 2ch`、按住说话设为 `Fn`。这是已确认的真实中文上屏路径。
+
+虚拟声卡之前/之后的蓝牙与 ATVV 链路并不绑定某一家输入法。换用其他语音输入工具时，核心条件仍然是：**能单独选择虚拟麦克风，能设置与桥接一致的按住说话快捷键，并且不会同时启用第二个识别前端**。从音频链路看原理基本一致；但不同输入法的设置名、快捷键冲突、云端识别和上屏行为可能不同，本项目没有逐家实测，不能把「原理相通」写成「其他输入法已验收」。换输入法后必须重新完成真实中文上屏验收。
+
 ## 直接开始
 
 只给 Agent 一个文件也行：[`docs/单文件指南.md`](docs/单文件指南.md)。它把 Windows 与 Mac 的步骤、固定提交、**两份完整补丁**、权限边界和验收方法写在一起；仓库里的 `AGENTS.md` 是更短的操作总入口。
@@ -59,7 +65,7 @@ Mac 补丁已在一台干净上游 checkout 上验证：`git apply --check` 通�
 | mi-remote-mapper | [`81199000/mi-remote-mapper`](https://github.com/81199000/mi-remote-mapper) | MIT | Google Remote Voice 的 Swift 菜单栏应用与映射基础 |
 | BlackHole 2ch | [ExistentialAudio/BlackHole](https://github.com/ExistentialAudio/BlackHole) · [官方下载页](https://existential.audio/blackhole) | GPL-3.0；其他用途请按项目说明联系作者 | Mac 端把遥控器解码音频变成可单独选择的虚拟输入设备 |
 | VB-CABLE | [VB-Audio 官网](https://vb-audio.com/Cable/) | 按 VB-Audio 官方许可 | Windows 端虚拟音频线；只从官网下载 |
-| 微信输入法 WeType | [官方入口](https://z.weixin.qq.com/) | 按腾讯官方许可 | 两端的中文语音识别与文字上屏；不需要付费 API Key |
+| 微信输入法 WeType | [官方入口](https://z.weixin.qq.com/) | 按腾讯官方许可 | 两端实机跑通的中文语音识别与文字上屏；其他输入法原理相近但未逐家实测，不需要付费 API Key |
 | Xcode Command Line Tools | Apple | Apple 许可 | Mac 端编译 Swift 应用 |
 
 完整出处、修改声明、历史弯路和授权边界见 [`docs/来源与许可.md`](docs/来源与许可.md)。本仓库不分发 Windows 无线麦上游完整源码、VB-CABLE、BlackHole PKG、微信输入法、Handy、本地识别模型、Apple PacketLogger 或任何个人配置/录音；通过固定提交和补丁重建修改版源码。
