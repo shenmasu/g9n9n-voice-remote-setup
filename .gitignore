@@ -1,0 +1,21 @@
+# Local installs, credentials, captures and personal runtime state.
+downloads/
+*.pkg
+*.dmg
+*.wav
+*.pcm
+*.opus
+*.pklg
+config.json
+key_bindings.json
+wetype.settings
+*.log
+__pycache__/
+.DS_Store
+.venv/
+*.app/
+build/
+*.key
+*.pem
+*token*
+*secret*

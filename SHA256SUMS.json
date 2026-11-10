@@ -1,0 +1,58 @@
+{
+  "generated": "2026-11-10",
+  "purpose": "Public, directly usable G9N9N Windows/macOS setup repository",
+  "files": {
+    ".gitignore": {
+      "bytes": 242,
+      "sha256": "8431e82e983b1556c632ccfc740fd982fd44a2bff70e3faf38d94f932cb3d104"
+    },
+    "AGENTS.md": {
+      "bytes": 1892,
+      "sha256": "a1eeb7db83d60f4dd8b438d5a04c202e26886702f53127ce4c6b965c693f06c3"
+    },
+    "docs/Mac-微信输入法方案.md": {
+      "bytes": 3126,
+      "sha256": "d3409003356e828fa60790a06fcd33c39428ab03aca428d28fdf4c18ccf1c505"
+    },
+    "docs/单文件指南.md": {
+      "bytes": 93286,
+      "sha256": "a61d47d9d1ba28987a1616175a553bfd5a6bb7d067dbe0987d704a823ae12e04"
+    },
+    "docs/来源与许可.md": {
+      "bytes": 5190,
+      "sha256": "dce7be26266cdda1f8d60f66a489a70093dbf7753a38f46ff85d171584f81488"
+    },
+    "LICENSE-CC0": {
+      "bytes": 455,
+      "sha256": "b65f6ea5c8fa7befee5376b96fd67ddaf393d8ed041b9a7b7813898c542ed46a"
+    },
+    "mac/安装G9N9N-Mac.command": {
+      "bytes": 608,
+      "sha256": "712c84044a4daabb6c48035a531dce5080006988a9c5eea753ec55691f7c1704"
+    },
+    "patches/mac-verified-final.patch": {
+      "bytes": 77578,
+      "sha256": "a0c2c685312af7ba1c984e08af96d97f3c7e0543336e68bf1f9cbd774ad7ffb6"
+    },
+    "patches/windows-verified-fix.patch": {
+      "bytes": 7081,
+      "sha256": "63aa908d0f8baac62f1355290b9c71383103ab7d7d22c87e3ff6698178ee8682"
+    },
+    "README.md": {
+      "bytes": 8523,
+      "sha256": "9a5045696b90d63abf1f743ebc778ff9508505ac532f8bd09f9ec930760d82d0"
+    },
+    "scripts/check-mac-runtime.sh": {
+      "bytes": 3229,
+      "sha256": "59a3b4f77f458f204af577eb0b4650aeb16d00f725b6369cf0b59469d81edd7b"
+    },
+    "windows/requirements-verified.txt": {
+      "bytes": 479,
+      "sha256": "1c0fe47eceabd44928cb445af8a99e142ee6a704c3b881bfd6be90ed7b43a82a"
+    },
+    "windows/完整指南.md": {
+      "bytes": 25589,
+      "sha256": "80d57185a591055f2262fd79156bffba85ab9efe0a8dfa2b76038e4e6b4bc4e4"
+    }
+  }
+}

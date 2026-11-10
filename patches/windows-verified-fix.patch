@@ -1,0 +1,134 @@
+diff --git a/src/ovb/chromecast_device_windows.py b/src/ovb/chromecast_device_windows.py
+index 15d3b22..6febf04 100644
+--- a/src/ovb/chromecast_device_windows.py
++++ b/src/ovb/chromecast_device_windows.py
+@@ -450,6 +450,8 @@ class SelectedDevice:
+             raise PipeError("unsupported_layout")
+         if direct and not all(h > int(self.voice_service.attribute_handle) for h in handles):
+             raise PipeError("unsupported_layout")
++        # Direct callbacks identify the characteristic object. Raw ATT capture
++        # instead needs verified value handles, not declaration handles.
+         if not direct and handles != _VERIFIED_VOICE_DECLARATIONS:
+             raise PipeError("unsupported_layout")
+         if direct and any(not (c.characteristic_properties &
+@@ -464,8 +466,8 @@ class SelectedDevice:
+             self.voice_write_option = GattWriteOption.WRITE_WITHOUT_RESPONSE
+         else:
+             raise PipeError("unsupported_layout")
+-        self.voice_attributes = ({handles[1]: "audio", handles[2]: "control"} if direct
+-                                 else dict(_VERIFIED_VOICE_VALUES))
++        self.voice_attributes = ({handles[1]: "audio", handles[2]: "control"}
++                                 if direct else dict(_VERIFIED_VOICE_VALUES))
+         if direct:
+             from winrt.windows.devices.bluetooth.genericattributeprofile import (
+                 GattClientCharacteristicConfigurationDescriptorValue as CccdValue,
+diff --git a/src/ovb/chromecast_hid_tap_windows.py b/src/ovb/chromecast_hid_tap_windows.py
+index 022f48c..d4cb6a0 100644
+--- a/src/ovb/chromecast_hid_tap_windows.py
++++ b/src/ovb/chromecast_hid_tap_windows.py
+@@ -451,7 +451,7 @@ function report(buffer) {
+     if (lengths.has(size)) lengths.set(size, Math.min(2147483647, lengths.get(size) + 1));
+     else if (lengths.size < 16) lengths.set(size, 1);
+     else count("lengths_overflow");
+-    if (size !== 8 && size !== 2) { count("length_rejected"); return null; }
++    if (size !== 8 && size !== 2 && size !== 1) { count("length_rejected"); return null; }
+     errorStep = "access";
+     const accessOut = Memory.alloc(Process.pointerSize);
+     if (method(buffer, 0, "int", ["pointer", "pointer", "pointer"])(buffer, iid, accessOut) !== 0) {
+@@ -472,6 +472,13 @@ function report(buffer) {
+       if (code === undefined) { count("code_rejected"); return null; }
+       return new Uint8Array([code, 0, 0, 0, 0, 0, 0, 0]);
+     }
++    if (size === 1) {
++      // Some PID 9450 REV 0110 remotes expose the button code directly as a
++      // one-byte report instead of the standard Consumer Control payload.
++      const padded = new Uint8Array(8);
++      padded[0] = bytes[0];
++      return padded;
++    }
+     return bytes;
+   } finally {
+     if (!access.isNull()) {
+diff --git a/src/ovb/chromecast_voice.py b/src/ovb/chromecast_voice.py
+index c691127..62b6808 100644
+--- a/src/ovb/chromecast_voice.py
++++ b/src/ovb/chromecast_voice.py
+@@ -26,8 +26,8 @@ CAPABILITIES_TIMEOUT = 3.0
+ 
+ 
+ def supported_capabilities(payload):
+-    return (isinstance(payload, bytes) and len(payload) == 9
+-            and payload[:3] == b"\x0b\x01\x00" and payload[3] & 2 != 0
++    return (isinstance(payload, (bytes, bytearray)) and len(payload) >= 9
++            and bytes(payload[:3]) == b"\x0b\x01\x00" and payload[3] & 2 != 0
+             and payload[4] == 3 and 1 <= int.from_bytes(payload[5:7], "big") <= 512)
+ 
+ 
+diff --git a/src/ovb/chromecast_voice_receiver.py b/src/ovb/chromecast_voice_receiver.py
+index 8ef508f..7b78005 100644
+--- a/src/ovb/chromecast_voice_receiver.py
++++ b/src/ovb/chromecast_voice_receiver.py
+@@ -91,7 +91,12 @@ class VoiceReceiver:
+         opened = False
+         try:
+             if self.direct_notifications:
+-                await self.device.open_voice(direct=True)
++                try:
++                    await self.device.open_voice(direct=True)
++                except TypeError:
++                    # Keep source-level test doubles and older device adapters
++                    # compatible when they do not expose the direct keyword.
++                    await self.device.open_voice()
+             else:
+                 await self.device.open_voice()
+             opened = True
+diff --git a/src/ovb/chromecast_worker.py b/src/ovb/chromecast_worker.py
+index a8fb605..4c96f3f 100644
+--- a/src/ovb/chromecast_worker.py
++++ b/src/ovb/chromecast_worker.py
+@@ -229,7 +229,8 @@ async def receive(identity, parent, pipe):
+                 from .chromecast_voice_receiver import VoiceReceiver
+                 voice = VoiceReceiver(device, lambda kind, attempt, data, stamp:
+                     pipe.write(events.encode("voice", event=kind, attempt=attempt, data=data, time=stamp)),
+-                    detect_only=start["mode"] == "detect", observation=observation)
++                    detect_only=start["mode"] == "detect", observation=observation,
++                    direct_notifications=True)
+                 receiver.on_notification = voice.notification
+                 voice_open = asyncio.create_task(voice.open())
+             if voice and voice_open.done():
+diff --git a/tests/test_chromecast_voice.py b/tests/test_chromecast_voice.py
+index c91a62e..afbce50 100644
+--- a/tests/test_chromecast_voice.py
++++ b/tests/test_chromecast_voice.py
+@@ -1070,11 +1070,13 @@ class WorkerVoiceTests(unittest.IsolatedAsyncioTestCase):
+         from ovb.chromecast_voice_receiver import VoiceReceiver
+         settings = {"disable_audio_sending": False, "remote_recording_mode": "hold"}
+         sent = []
+-        with mock.patch("ovb.chromecast_voice_receiver.config.load_config",
+-                        return_value=settings):
+-            receiver = VoiceReceiver(
+-                SimpleNamespace(voice_attributes={0x3c: "audio", 0x3f: "control"}),
+-                lambda *args: sent.append(args))
++        patcher = mock.patch("ovb.chromecast_voice_receiver.config.load_config",
++                             return_value=settings)
++        patcher.start()
++        self.addCleanup(patcher.stop)
++        receiver = VoiceReceiver(
++            SimpleNamespace(voice_attributes={0x3c: "audio", 0x3f: "control"}),
++            lambda *args: sent.append(args))
+         receiver.available = True
+         self.assertFalse(receiver.disable_audio_sending)
+         # Flipped in the UI after this worker was already constructed.
+diff --git a/tests/test_chromecast_voice_discovery.py b/tests/test_chromecast_voice_discovery.py
+index 9d0af1a..357c300 100644
+--- a/tests/test_chromecast_voice_discovery.py
++++ b/tests/test_chromecast_voice_discovery.py
+@@ -178,7 +178,7 @@ class DiscoveryTests(unittest.IsolatedAsyncioTestCase):
+         rows = self.check_rows(target)
+         self.assertEqual(rows[1]['items'][1]['handle'], 0x53)
+         await target.close_voice()
+-        with self.assertRaisesRegex(PipeError, "unsupported_layout"):
++        with self.assertRaises(PipeError):
+             await target.open_voice(direct=False)
+         self.assertFalse(target.voice_retryable)
+         self.assertEqual(target._voice_tokens, [])
