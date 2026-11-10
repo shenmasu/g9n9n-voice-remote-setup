@@ -39,8 +39,8 @@
       "sha256": "63aa908d0f8baac62f1355290b9c71383103ab7d7d22c87e3ff6698178ee8682"
     },
     "README.md": {
-      "bytes": 8523,
-      "sha256": "9a5045696b90d63abf1f743ebc778ff9508505ac532f8bd09f9ec930760d82d0"
+      "bytes": 8810,
+      "sha256": "40d05529f7a77219e6587d1811e4f4594013dc37657d8bb5d1aaa9ca3bc3373a"
     },
     "scripts/check-mac-runtime.sh": {
       "bytes": 3229,

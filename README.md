@@ -4,6 +4,15 @@
 
 这不是 Google、Apple、腾讯或任何上游项目的官方产品；本仓库只整理已实测的成功路径、固定版本、补丁、来源和验收边界。请把这份仓库链接或 `docs/单文件指南.md` 交给自己的 Agent，让它按对应系统一步一步配置。单文件指南末尾内嵌两份完整补丁，发给朋友时不需要再附私有工程文件。
 
+公开仓库：`https://github.com/shenmasu/g9n9n-voice-remote-setup`。拿到地址后可直接：
+
+```sh
+git clone https://github.com/shenmasu/g9n9n-voice-remote-setup.git
+cd g9n9n-voice-remote-setup
+# 先读 AGENTS.md 与 docs/单文件指南.md，再选 Windows 或 Mac 路线
+```
+
+
 ## 两条路线，选一条
 
 | 系统 | 已验证环境 | 语音链路 | 普通键链路 |
